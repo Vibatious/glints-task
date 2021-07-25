@@ -1,1 +1,1 @@
-export { SQLServer } from './sql-connector';
+export { Database } from './database';
