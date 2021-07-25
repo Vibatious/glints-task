@@ -1,4 +1,3 @@
-import { exit } from "process";
 import { MysqlConnection } from "./db/mysql-connection";
 import { MigrateRestaurantToDB } from "./migrate-resturant-to-db";
 import { MigrateUserToDB } from "./migrate-user-data-to-db";
@@ -9,6 +8,7 @@ mysql.init().then(async () => {
 		await migrateRawResturantToDB();
 		await migrateRawUserToDB();
 		mysql.closeConnection();
+		process.exit();
 	} catch (error) {
 		console.log(error);
 	}
