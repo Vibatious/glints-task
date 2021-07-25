@@ -1,6 +1,6 @@
 import express = require('express');
 import bodyParser = require('body-parser');
-import { environment } from '../environment'
+import { environment } from '../../../environment'
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
