@@ -57,8 +57,8 @@
 
 -> Ouptut : Confirmation message for the user.
 
--> Errors: return errors/abort transaction if: 
-	- any of the api parameters is absent,
-	- user donot have enough cash balance,
-	- resturnat id is not present,
-	- dish id for that particular resturant is not present
+-> Errors: return errors/abort transaction if:
+- any of the api parameters is absent,
+- user donot have enough cash balance,
+- resturnat id is not present,
+- dish id for that particular resturant is not present
