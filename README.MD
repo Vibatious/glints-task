@@ -10,7 +10,6 @@
 
 
 # 2) List top y restaurants that have more or less than x number of dishes within a price range
-
 - For this operation we have one endpoint with different queryParams
 
 -> Endpoint1: /getTopRestaurants?top=y&&greaterThan=x&&fromPrice=lower&&toPrice=higher
