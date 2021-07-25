@@ -1,0 +1,17 @@
+export enum SQLVerb {
+	SELECT = 'SELECT',
+	FROM = 'FROM',
+	INSERT = 'INSERT',
+	WHERE = 'WHERE',
+	VALUES = 'VALUES',
+	AND = 'AND',
+	GROUP_BY = 'GROUP BY',
+	HAVING = 'HAVING',
+	IN = 'IN',
+	TEMP_TABLE = 'TEMP_TABLE',
+	ORDER_BY = 'ORDER BY',
+	COUNT = 'COUNT',
+	LIKE = 'LIKE',
+	LIMIT = 'LIMIT',
+	AS = 'AS'
+}
