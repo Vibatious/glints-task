@@ -25,7 +25,6 @@ export class MigrateUserToDB {
 
 	async createUserTable() {
 		const userDetailsquery = "CREATE TABLE customerDetails (customerid int NOT NULL, customerName varchar(255) NOT NULL, cashBalance DOUBLE, PRIMARY KEY (customerid))"
-		// this.db.query(userDetailsquery);
 		await this.triggerSQLQuery(userDetailsquery);
 		const userPurchaseHistory = "CREATE TABLE purchaseHistory (transactionid INT NOT NULL AUTO_INCREMENT, customerid INT NOT NULL, dishName varchar(1000) NOT NULL, restaurantName varchar(255) NOT NULL, transactionAmount DOUBLE NOT NULL, PRIMARY KEY (transactionid), transactionDate varchar(30) NOT NULL, FOREIGN KEY (customerid) REFERENCES customerDetails (customerid))"
 		// this.db.query(userPurchaseHistory);

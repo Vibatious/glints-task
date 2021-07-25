@@ -12,6 +12,7 @@
   "author": "vibatious",
   "license": "ISC",
   "dependencies": {
+    "moment": "^2.29.1",
     "mysql2": "^2.2.5"
   },
   "devDependencies": {
