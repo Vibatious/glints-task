@@ -38,7 +38,9 @@ export class MysqlConnection {
 
 	closeConnection() {
 		this.db.end((err) => {
-			throw err;
+			if (err) {
+				throw err;
+			}
 		});
 	}
 
