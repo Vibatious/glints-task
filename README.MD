@@ -1,7 +1,7 @@
 ## APIs
 # 1) List all restaurants that are open at a certain datetime
 
-- Endpoint : /getOpenedRestaurants?dateTime=dd-mm-yy HH:mm
+- Endpoint : /getOpenedRestaurants?dateTime=DD/MM/YYYY HH:mm
 	- Output: 
 		- List of all Restaurants contain he Restaurant id, name, cashbalance,
 		- Reponse is compressed, and of type RestaurantData(as defined in data-models directory)

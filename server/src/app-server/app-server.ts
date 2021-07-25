@@ -87,10 +87,11 @@ app.get('/relevantDishes', async (req, res) => {
 })
 
 app.get('/placeOrder/userid/:uid/resturantid/:rid/dishid/:did', async (req, res) => {
-	const { uid, rid, did } = req.query;
+	const { uid, rid, did } = req.params;
 	try {
 		if (uid && rid && did) {
-
+			const purchaseHistory = await appServerAPI.placeOrder(Number(did), Number(uid), Number(rid));
+			res.send(purchaseHistory);
 		} else {
 			res.status(400).send({ error: 'In sufficient Information' });
 		}
