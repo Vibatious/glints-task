@@ -39,10 +39,16 @@ app.get('/get-top-resturants', async (req, res) => {
 	const { top, greaterThan, lessThan, fromPrice, toPrice } = req.query;
 	try {
 		if (top && fromPrice && toPrice && (greaterThan || lessThan)) {
-			if (greaterThan) {
-				
+			if (Number(greaterThan) >= 0) {
+				const resturantData = await appServerAPI.getResturantHavingDishesGreaterThanInPriceRange(Number(top), Number(greaterThan), Number(fromPrice), Number(toPrice));
+				res.send(resturantData);
 			} else {
-
+				if (Number(lessThan) > 1) {
+					const resturantData = await appServerAPI.getResturantHavingDishesLesserThanInPriceRange(Number(top), Number(lessThan), Number(fromPrice), Number(toPrice));
+					res.send(resturantData);
+				} else {
+					res.status(400).send({ error: 'In sufficient Information' });
+				}
 			}
 		} else {
 			res.status(400).send({ error: 'In sufficient Information' });

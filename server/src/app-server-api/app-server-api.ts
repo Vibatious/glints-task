@@ -11,9 +11,15 @@ export class AppServerAPI {
 		return await this.db.getOpenedResturant(this.getDayIndex(dateTime), this.getTime(dateTime));
 	}
 
-	async getResturant(dateTime: string) {
+	async getResturantHavingDishesGreaterThanInPriceRange(noOfResturant: number, atLeastNoOfDishes: number, fromPrice: number, toPrice: number) {
 		//dateTime in dd-mm-yyyy HH:mm
-		return await this.db.getOpenedResturant(this.getDayIndex(dateTime), this.getTime(dateTime));
+		return await this.db.getResturantHavingDishesGreaterThanInPriceRange(noOfResturant, atLeastNoOfDishes, fromPrice, toPrice);
+	}
+
+
+	async getResturantHavingDishesLesserThanInPriceRange(noOfResturant: number, atLeastNoOfDishes: number, fromPrice: number, toPrice: number) {
+		//dateTime in dd-mm-yyyy HH:mm
+		return await this.db.getResturantHavingDishesLesserThanInPriceRange(noOfResturant, atLeastNoOfDishes, fromPrice, toPrice);
 	}
 
 
