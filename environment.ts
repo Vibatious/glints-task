@@ -4,7 +4,7 @@ export const environment = {
 		host: 'localhost',
 		user: 'root',
 		port: 3306,
-		password: 'Shivani@512',
+		password: '', //password of root user
 	},
 	database: 'glints'
 }

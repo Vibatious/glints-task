@@ -15,20 +15,19 @@ Project is developed for the task given in glints horing process:
 
 # Procedure to check
 1. Enter the environment configuration which is requrired for the test.
-2. Load Db using Raw Data
-	a) got to elt_script and run 
-	```sh
-		cd etl_Scripts
-		npm i 
-		npm start
-	```
+2. Load Db using Raw Data, by running: 
+```sh
+	cd etl_Scripts
+	npm i 
+	npm start
+```
 
-3. Start the server
-	```sh
-		cd ../server
-		npm i 
-		npm start
-	```
+3. Start the server, by running: 
+```sh
+	cd ../server
+	npm i 
+	npm start
+```
 -> Now your server is listening on the port 3000/defined in the environment file.
 
 
