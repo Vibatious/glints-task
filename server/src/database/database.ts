@@ -1,6 +1,5 @@
 import { SQLConnection } from "./sql-connection";
-import { ResturantData, ResturantDetailTable, ResturantMenuTable, ResturantTimingsTable } from '../../../sql-tables';
-import mysql = require('mysql2');
+import { RestaurantData, RestaurantDetailTable, RestaurantMenuData, RestaurantMenuTable, RestaurantTimingsTable, SQLVerb } from '../../../data-models';
 
 export class Database {
 
@@ -14,32 +13,38 @@ export class Database {
 		this.sql.init();
 	}
 
-	async getOpenedResturant(dayNum: number, time: string) {
-		const query2 = `SELECT ${ResturantTimingsTable.RESTURANT_ID_PROPERTY} FROM ${ResturantTimingsTable.TABLE_NAME} WHERE ${ResturantTimingsTable.DAY_NUM_PROPERTY}=${dayNum} AND ${ResturantTimingsTable.OPENING_TIME_PROPERTY}<='${time}' AND ${ResturantTimingsTable.CLOSING_TIME_PROPERTY}>'${time}'`;
-		const query = `SELECT * FROM ${ResturantDetailTable.TABLE_NAME} WHERE ${ResturantDetailTable.RESTURANT_ID_PROPERTY} IN (${query2})`;
+	async getOpenedRestaurant(dayNum: number, time: string) {
+		const query2 = `${SQLVerb.SELECT} ${RestaurantTimingsTable.RESTAURANT_ID_PROPERTY} ${SQLVerb.FROM} ${RestaurantTimingsTable.TABLE_NAME} ${SQLVerb.WHERE} ${RestaurantTimingsTable.DAY_NUM_PROPERTY}=${dayNum} ${SQLVerb.AND} ${RestaurantTimingsTable.OPENING_TIME_PROPERTY}<='${time}' ${SQLVerb.AND} ${RestaurantTimingsTable.CLOSING_TIME_PROPERTY}>'${time}'`;
+		const query = `${SQLVerb.SELECT} * ${SQLVerb.FROM} ${RestaurantDetailTable.TABLE_NAME} ${SQLVerb.WHERE} ${RestaurantDetailTable.RESTAURANT_ID_PROPERTY} ${SQLVerb.IN} (${query2})`;
 		const result = await this.triggerSQLQuery(query);
-		return result.map((data: any) => ResturantData.fromSQLResult(data));
+		return result.map((data: any) => RestaurantData.fromSQLResult(data));
 	}
 
-	async getResturantHavingDishesGreaterThanInPriceRange(noOfResturant: number, atLeastNoOfDishes: number, fromPrice: number, toPrice: number) {
-		const query2 = `SELECT  ${ResturantMenuTable.RESTURANT_ID_PROPERTY} FROM (SELECT ${ResturantMenuTable.RESTURANT_ID_PROPERTY} FROM ${ResturantMenuTable.TABLE_NAME} WHERE ${ResturantMenuTable.DISH_PRICE_PROPERTY}>${fromPrice} AND ${ResturantMenuTable.DISH_PRICE_PROPERTY}<${toPrice} GROUP BY ${ResturantMenuTable.RESTURANT_ID_PROPERTY} HAVING COUNT(${ResturantMenuTable.RESTURANT_ID_PROPERTY})>${atLeastNoOfDishes} ORDER BY COUNT(${ResturantMenuTable.RESTURANT_ID_PROPERTY}) LIMIT ${noOfResturant}) AS TEMP`;
-		const query = `SELECT * FROM ${ResturantDetailTable.TABLE_NAME} WHERE ${ResturantDetailTable.RESTURANT_ID_PROPERTY} IN (${query2})`;
+	async getRestaurantHavingDishesGreaterThanInPriceRange(noOfRestaurant: number, atLeastNoOfDishes: number, fromPrice: number, toPrice: number) {
+		const query2 = `${SQLVerb.SELECT} ${RestaurantMenuTable.RESTAURANT_ID_PROPERTY} ${SQLVerb.FROM} (${SQLVerb.SELECT} ${RestaurantMenuTable.RESTAURANT_ID_PROPERTY} ${SQLVerb.FROM} ${RestaurantMenuTable.TABLE_NAME} ${SQLVerb.WHERE} ${RestaurantMenuTable.DISH_PRICE_PROPERTY}>${fromPrice} ${SQLVerb.AND} ${RestaurantMenuTable.DISH_PRICE_PROPERTY}<${toPrice} ${SQLVerb.GROUP_BY} ${RestaurantMenuTable.RESTAURANT_ID_PROPERTY} ${SQLVerb.HAVING} ${SQLVerb.COUNT}(${RestaurantMenuTable.RESTAURANT_ID_PROPERTY})>${atLeastNoOfDishes} ${SQLVerb.ORDER_BY} ${SQLVerb.COUNT}(${RestaurantMenuTable.RESTAURANT_ID_PROPERTY}) ${SQLVerb.LIMIT} ${noOfRestaurant}) ${SQLVerb.AS} ${SQLVerb.TEMP_TABLE}`;
+		const query = `${SQLVerb.SELECT} * ${SQLVerb.FROM} ${RestaurantDetailTable.TABLE_NAME} ${SQLVerb.WHERE} ${RestaurantDetailTable.RESTAURANT_ID_PROPERTY} ${SQLVerb.IN} (${query2})`;
 		const result = await this.triggerSQLQuery(query);
-		return result.map((data: any) => ResturantData.fromSQLResult(data));
+		return result.map((data: any) => RestaurantData.fromSQLResult(data));
 	}
 
-	async getResturantHavingDishesLesserThanInPriceRange(noOfResturant: number, maxNoOfDishes: number, fromPrice: number, toPrice: number) {
-		const query2 = `SELECT ${ResturantMenuTable.RESTURANT_ID_PROPERTY} FROM (SELECT ${ResturantMenuTable.RESTURANT_ID_PROPERTY} FROM ${ResturantMenuTable.TABLE_NAME} WHERE ${ResturantMenuTable.DISH_PRICE_PROPERTY}>${fromPrice} AND ${ResturantMenuTable.DISH_PRICE_PROPERTY}<${toPrice} GROUP BY ${ResturantMenuTable.RESTURANT_ID_PROPERTY} HAVING COUNT(${ResturantMenuTable.RESTURANT_ID_PROPERTY})<${maxNoOfDishes} AND COUNT(${ResturantMenuTable.RESTURANT_ID_PROPERTY})>0 ORDER BY COUNT(${ResturantMenuTable.RESTURANT_ID_PROPERTY}) LIMIT ${noOfResturant}) AS TEMP`;
-		const query = `SELECT * FROM ${ResturantDetailTable.TABLE_NAME} WHERE ${ResturantDetailTable.RESTURANT_ID_PROPERTY} IN (${query2})`;
+	async getRestaurantHavingDishesLesserThanInPriceRange(noOfRestaurant: number, maxNoOfDishes: number, fromPrice: number, toPrice: number) {
+		const query2 = `${SQLVerb.SELECT} ${RestaurantMenuTable.RESTAURANT_ID_PROPERTY} ${SQLVerb.FROM} (${SQLVerb.SELECT} ${RestaurantMenuTable.RESTAURANT_ID_PROPERTY} ${SQLVerb.FROM} ${RestaurantMenuTable.TABLE_NAME} ${SQLVerb.WHERE} ${RestaurantMenuTable.DISH_PRICE_PROPERTY}>${fromPrice} ${SQLVerb.AND} ${RestaurantMenuTable.DISH_PRICE_PROPERTY}<${toPrice} ${SQLVerb.GROUP_BY} ${RestaurantMenuTable.RESTAURANT_ID_PROPERTY} ${SQLVerb.HAVING} ${SQLVerb.COUNT}(${RestaurantMenuTable.RESTAURANT_ID_PROPERTY})<${maxNoOfDishes} ${SQLVerb.AND} ${SQLVerb.COUNT}(${RestaurantMenuTable.RESTAURANT_ID_PROPERTY})>0 ${SQLVerb.ORDER_BY} ${SQLVerb.COUNT}(${RestaurantMenuTable.RESTAURANT_ID_PROPERTY}) ${SQLVerb.LIMIT} ${noOfRestaurant}) ${SQLVerb.AS} ${SQLVerb.TEMP_TABLE}`;
+		const query = `${SQLVerb.SELECT} * ${SQLVerb.FROM} ${RestaurantDetailTable.TABLE_NAME} ${SQLVerb.WHERE} ${RestaurantDetailTable.RESTAURANT_ID_PROPERTY} ${SQLVerb.IN} (${query2})`;
 		const result = await this.triggerSQLQuery(query);
-		return result.map((data: any) => ResturantData.fromSQLResult(data));
+		return result.map((data: any) => RestaurantData.fromSQLResult(data));
 	}
 
-	async getResturantOnSearchTerm(noOfResturant: number, maxNoOfDishes: number, fromPrice: number, toPrice: number) {
-		// const query2 = `SELECT ${ResturantMenuTable.RESTURANT_ID_PROPERTY} ${ResturantMenuTable.DISH_ID_PROPERTY} FROM ${ResturantMenuTable.TABLE_NAME},${ResturantDetailTable} WHERE ${RESTUR  }`;
-		// const query = `SELECT * FROM ${ResturantDetailTable.TABLE_NAME} WHERE ${ResturantDetailTable.RESTURANT_ID_PROPERTY} IN (${query2})`;
-		// const result = await this.triggerSQLQuery(query);
-		// return result.map((data: any) => ResturantData.fromSQLResult(data));
+	async getRestaurantOnSearchTerm(searchTerm: string) {
+		const query = `${SQLVerb.SELECT} * ${SQLVerb.FROM} ${RestaurantDetailTable.TABLE_NAME} ${SQLVerb.WHERE} ${RestaurantDetailTable.RESTAURANT_NAME_PROPERTY} ${SQLVerb.LIKE} '%${searchTerm}%'  `;
+		const result = await this.triggerSQLQuery(query);
+		return result.map((data: any) => RestaurantData.fromSQLResult(data));
+	}
+
+	async getDishesOnSearchTerm(searchTerm: string) {
+		const query2 = `${SQLVerb.SELECT} ${RestaurantMenuTable.RESTAURANT_ID_PROPERTY},${RestaurantMenuTable.DISH_NAME_PROPERTY},${RestaurantMenuTable.DISH_ID_PROPERTY},${RestaurantMenuTable.DISH_PRICE_PROPERTY} ${SQLVerb.FROM} ${RestaurantMenuTable.TABLE_NAME} ${SQLVerb.WHERE} ${RestaurantMenuTable.DISH_NAME_PROPERTY} ${SQLVerb.LIKE} '%${searchTerm}%' `;
+		const query = `${SQLVerb.SELECT} ${RestaurantMenuTable.DISH_ID_PROPERTY},${RestaurantMenuTable.DISH_NAME_PROPERTY},${RestaurantMenuTable.DISH_PRICE_PROPERTY},${RestaurantDetailTable.RESTAURANT_NAME_PROPERTY} ${SQLVerb.FROM} ${RestaurantDetailTable.TABLE_NAME},(${query2}) ${SQLVerb.AS} ${SQLVerb.TEMP_TABLE} ${SQLVerb.WHERE} ${RestaurantDetailTable.TABLE_NAME}.${RestaurantDetailTable.RESTAURANT_ID_PROPERTY} = ${SQLVerb.TEMP_TABLE}.${RestaurantDetailTable.RESTAURANT_ID_PROPERTY}`;
+		const result = await this.triggerSQLQuery(query);
+		return result.map((data: any) => RestaurantMenuData.fromSQLResult(data));
 	}
 
 	private triggerSQLQuery(query: string): any {

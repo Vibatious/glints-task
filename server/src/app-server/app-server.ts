@@ -20,12 +20,12 @@ app.get('/heartbeat', (req, res) => {
 	}
 });
 
-app.get('/get-opened-resturants', async (req, res) => {
+app.get('/getOpenedRestaurants', async (req, res) => {
 	const dateTime = req.query.dateTime;
 	//dateTime in dd-mm-yyyy HH:mm
 	try {
 		if (dateTime) {
-			const resturantData = await appServerAPI.getOpenedResturant(dateTime.toString());
+			const resturantData = await appServerAPI.getOpenedRestaurant(dateTime.toString());
 			res.send(resturantData);
 		} else {
 			res.status(400).send({ error: 'In sufficient Information' });
@@ -35,16 +35,16 @@ app.get('/get-opened-resturants', async (req, res) => {
 	}
 })
 
-app.get('/get-top-resturants', async (req, res) => {
+app.get('/getTopRestaurants', async (req, res) => {
 	const { top, greaterThan, lessThan, fromPrice, toPrice } = req.query;
 	try {
 		if (top && fromPrice && toPrice && (greaterThan || lessThan)) {
 			if (Number(greaterThan) >= 0) {
-				const resturantData = await appServerAPI.getResturantHavingDishesGreaterThanInPriceRange(Number(top), Number(greaterThan), Number(fromPrice), Number(toPrice));
+				const resturantData = await appServerAPI.getRestaurantHavingDishesGreaterThanInPriceRange(Number(top), Number(greaterThan), Number(fromPrice), Number(toPrice));
 				res.send(resturantData);
 			} else {
 				if (Number(lessThan) > 1) {
-					const resturantData = await appServerAPI.getResturantHavingDishesLesserThanInPriceRange(Number(top), Number(lessThan), Number(fromPrice), Number(toPrice));
+					const resturantData = await appServerAPI.getRestaurantHavingDishesLesserThanInPriceRange(Number(top), Number(lessThan), Number(fromPrice), Number(toPrice));
 					res.send(resturantData);
 				} else {
 					res.status(400).send({ error: 'In sufficient Information' });
@@ -58,11 +58,12 @@ app.get('/get-top-resturants', async (req, res) => {
 	}
 })
 
-app.get('/relevant-resturants', async (req, res) => {
+app.get('/relevantRestaurants', async (req, res) => {
 	const { searchTerm } = req.query;
 	try {
 		if (searchTerm) {
-
+			const resturantData = await appServerAPI.getRestaurantOnSearchTerm(searchTerm)
+			res.send(resturantData);
 		} else {
 			res.status(400).send({ error: 'In sufficient Information' });
 		}
@@ -71,11 +72,12 @@ app.get('/relevant-resturants', async (req, res) => {
 	}
 })
 
-app.get('/relevant-dishes', async (req, res) => {
+app.get('/relevantDishes', async (req, res) => {
 	const { searchTerm } = req.query;
 	try {
 		if (searchTerm) {
-
+			const dishData = await appServerAPI.getDishesOnSearchTerm(searchTerm)
+			res.send(dishData);
 		} else {
 			res.status(400).send({ error: 'In sufficient Information' });
 		}
@@ -84,20 +86,7 @@ app.get('/relevant-dishes', async (req, res) => {
 	}
 })
 
-app.get('/relevant-dishes', async (req, res) => {
-	const { searchTerm } = req.query;
-	try {
-		if (searchTerm) {
-
-		} else {
-			res.status(400).send({ error: 'In sufficient Information' });
-		}
-	} catch (error) {
-		res.status(400).send({ error: error.message });
-	}
-})
-
-app.get('/place-order/userid/:uid/resturantid/:rid/dishid/:did', async (req, res) => {
+app.get('/placeOrder/userid/:uid/resturantid/:rid/dishid/:did', async (req, res) => {
 	const { uid, rid, did } = req.query;
 	try {
 		if (uid && rid && did) {

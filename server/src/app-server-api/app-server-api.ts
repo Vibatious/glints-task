@@ -6,20 +6,27 @@ export class AppServerAPI {
 		this.db = new Database();
 	}
 
-	async getOpenedResturant(dateTime: string) {
+	async getOpenedRestaurant(dateTime: string) {
 		//dateTime in dd-mm-yyyy HH:mm
-		return await this.db.getOpenedResturant(this.getDayIndex(dateTime), this.getTime(dateTime));
+		return await this.db.getOpenedRestaurant(this.getDayIndex(dateTime), this.getTime(dateTime));
 	}
 
-	async getResturantHavingDishesGreaterThanInPriceRange(noOfResturant: number, atLeastNoOfDishes: number, fromPrice: number, toPrice: number) {
-		//dateTime in dd-mm-yyyy HH:mm
-		return await this.db.getResturantHavingDishesGreaterThanInPriceRange(noOfResturant, atLeastNoOfDishes, fromPrice, toPrice);
+	async getRestaurantHavingDishesGreaterThanInPriceRange(noOfRestaurant: number, atLeastNoOfDishes: number, fromPrice: number, toPrice: number) {
+		return await this.db.getRestaurantHavingDishesGreaterThanInPriceRange(noOfRestaurant, atLeastNoOfDishes, fromPrice, toPrice);
 	}
 
 
-	async getResturantHavingDishesLesserThanInPriceRange(noOfResturant: number, atLeastNoOfDishes: number, fromPrice: number, toPrice: number) {
-		//dateTime in dd-mm-yyyy HH:mm
-		return await this.db.getResturantHavingDishesLesserThanInPriceRange(noOfResturant, atLeastNoOfDishes, fromPrice, toPrice);
+	async getRestaurantHavingDishesLesserThanInPriceRange(noOfRestaurant: number, atLeastNoOfDishes: number, fromPrice: number, toPrice: number) {
+		return await this.db.getRestaurantHavingDishesLesserThanInPriceRange(noOfRestaurant, atLeastNoOfDishes, fromPrice, toPrice);
+	}
+
+
+	async getRestaurantOnSearchTerm(searchTerm: any) {
+		return await this.db.getRestaurantOnSearchTerm(searchTerm);
+	}
+
+	async getDishesOnSearchTerm(searchTerm: any) {
+		return await this.db.getDishesOnSearchTerm(searchTerm);
 	}
 
 
