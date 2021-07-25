@@ -2,7 +2,7 @@ import { ResultSetHeader } from 'mysql2';
 import mysql = require('mysql2');
 import moment from 'moment';
 import { default as rsData } from '../raw-data/restaurant_with_menu.json';
-
+import { ResturantDetailTable, ResturantMenuTable, ResturantTimingsTable } from '../../../sql-tables'
 export class ResturantTimeMeta {
 	dayIndex: number;
 	closingTime: string;
@@ -27,19 +27,19 @@ export class MigrateResturantToDB {
 	}
 
 	private async createResturantTable() {
-		const resturantDetailsquery = "CREATE TABLE resturantDetails (resturantid INT NOT NULL AUTO_INCREMENT, resturantName varchar(255) NOT NULL, cashBalance DOUBLE, PRIMARY KEY (resturantid))"
+		const resturantDetailsquery = `CREATE TABLE ${ResturantDetailTable.TABLE_NAME} (${ResturantDetailTable.RESTURANT_ID_PROPERTY} INT NOT NULL AUTO_INCREMENT, ${ResturantDetailTable.RESTURANT_NAME_PROPERTY} varchar(255) NOT NULL, ${ResturantDetailTable.CASH_BALANCE_PROPERTY} DOUBLE, PRIMARY KEY (${ResturantDetailTable.RESTURANT_ID_PROPERTY}))`
 		await this.triggerSQLQuery(resturantDetailsquery);
-		const resturantPurchaseHistory = "CREATE TABLE resturantMenu (dishid INT NOT NULL AUTO_INCREMENT, resturantid INT NOT NULL, dishName varchar(1000) NOT NULL, dishPrice DOUBLE NOT NULL, PRIMARY KEY (dishid), FOREIGN KEY (resturantid) REFERENCES resturantDetails (resturantid))"
+		const resturantPurchaseHistory = `CREATE TABLE ${ResturantMenuTable.TABLE_NAME} (${ResturantMenuTable.DISH_ID_PROPERTY} INT NOT NULL AUTO_INCREMENT, ${ResturantMenuTable.RESTURANT_ID_PROPERTY} INT NOT NULL, ${ResturantMenuTable.DISH_NAME_PROPERTY} varchar(1000) NOT NULL, ${ResturantMenuTable.DISH_PRICE_PROPERTY} DOUBLE NOT NULL, PRIMARY KEY (${ResturantMenuTable.DISH_ID_PROPERTY}), FOREIGN KEY (${ResturantMenuTable.RESTURANT_ID_PROPERTY}) REFERENCES ${ResturantDetailTable.TABLE_NAME} (${ResturantMenuTable.RESTURANT_ID_PROPERTY}))`
 		await this.triggerSQLQuery(resturantPurchaseHistory);
-		const resturantTimingsHistory = "CREATE TABLE resturantTimings (id int NOT NULL AUTO_INCREMENT, resturantid int NOT NULL, dayNum int NOT NULL, openingTime varchar(10) DEFAULT NULL, closingTime varchar(10) DEFAULT NULL, PRIMARY KEY (id), FOREIGN KEY (resturantid) REFERENCES resturantDetails(resturantid))"
+		const resturantTimingsHistory = `CREATE TABLE ${ResturantTimingsTable.TABLE_NAME} (${ResturantTimingsTable.ID_PROPERTY} int NOT NULL AUTO_INCREMENT, ${ResturantTimingsTable.RESTURANT_ID_PROPERTY} int NOT NULL, ${ResturantTimingsTable.DAY_NUM_PROPERTY} int NOT NULL, ${ResturantTimingsTable.OPENING_TIME_PROPERTY} TIME DEFAULT NULL, ${ResturantTimingsTable.CLOSING_TIME_PROPERTY} TIME DEFAULT NULL, PRIMARY KEY (${ResturantTimingsTable.ID_PROPERTY}), FOREIGN KEY (${ResturantTimingsTable.RESTURANT_ID_PROPERTY}) REFERENCES ${ResturantDetailTable.TABLE_NAME}(${ResturantTimingsTable.RESTURANT_ID_PROPERTY}))`
 		await this.triggerSQLQuery(resturantTimingsHistory);
 
 	}
 
 	async migrateDataToDb() {
-		const insertInResturantDetailsTable = "INSERT INTO resturantDetails (`resturantName`, `cashBalance`) VALUES (?, ?)";
-		const insertInResturantMenuTable = "INSERT INTO resturantMenu (`resturantid`,`dishName`, `dishPrice`) VALUE (?, ?, ?)";
-		const insertInResturantTimingTable = "INSERT INTO resturantTimings (`resturantid`,`dayNum`, `openingTime`,`closingTime`) VALUE (?, ?, ?, ?)";
+		const insertInResturantDetailsTable = `INSERT INTO ${ResturantDetailTable.TABLE_NAME} (${ResturantDetailTable.RESTURANT_NAME_PROPERTY}, ${ResturantDetailTable.CASH_BALANCE_PROPERTY}) VALUES (?, ?)`;
+		const insertInResturantMenuTable = `INSERT INTO ${ResturantMenuTable.TABLE_NAME} (${ResturantMenuTable.RESTURANT_ID_PROPERTY},${ResturantMenuTable.DISH_NAME_PROPERTY}, ${ResturantMenuTable.DISH_PRICE_PROPERTY}) VALUE (?, ?, ?)`;
+		const insertInResturantTimingTable = `INSERT INTO ${ResturantTimingsTable.TABLE_NAME} (${ResturantTimingsTable.RESTURANT_ID_PROPERTY},${ResturantTimingsTable.DAY_NUM_PROPERTY}, ${ResturantTimingsTable.OPENING_TIME_PROPERTY},${ResturantTimingsTable.CLOSING_TIME_PROPERTY}) VALUE (?, ?, ?, ?)`;
 		for (let resturant of rsData) {
 			const timingsMeta = this.getResturantOpeningDetails(resturant.openingHours);
 			const data = await this.triggerSQLQuery(insertInResturantDetailsTable, [resturant.restaurantName, resturant.cashBalance]);

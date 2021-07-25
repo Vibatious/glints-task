@@ -1,17 +1,7 @@
 import mysql = require('mysql2');
 import { default as userData } from '../raw-data/users_with_purchase_history.json';
+import { CustomerDetailsTable, CustomerPurchaseHistoryTable } from '../../../sql-tables';
 
-enum UserProperty {
-	id = "id",
-	cashBalance = "cashBalance",
-	name = "name",
-	dishName = "dishName",
-	restaurantName = "restaurantName",
-	transactionAmount = "transactionAmount",
-	transactionDate = "transactionDate",
-
-
-}
 export class MigrateUserToDB {
 	private db!: mysql.Connection;
 	constructor(db: mysql.Connection) {
@@ -24,16 +14,15 @@ export class MigrateUserToDB {
 	}
 
 	async createUserTable() {
-		const userDetailsquery = "CREATE TABLE customerDetails (customerid int NOT NULL, customerName varchar(255) NOT NULL, cashBalance DOUBLE, PRIMARY KEY (customerid))"
+		const userDetailsquery = `CREATE TABLE ${CustomerDetailsTable.TABLE_NAME} (${CustomerDetailsTable.CUSTOMER_ID_PROPERTY} int NOT NULL, ${CustomerDetailsTable.CUSTOMER_NAME_PROPERTY} varchar(255) NOT NULL, ${CustomerDetailsTable.CASH_BALANCE_PROPERTY} DOUBLE, PRIMARY KEY (customerid))`
 		await this.triggerSQLQuery(userDetailsquery);
-		const userPurchaseHistory = "CREATE TABLE purchaseHistory (transactionid INT NOT NULL AUTO_INCREMENT, customerid INT NOT NULL, dishName varchar(1000) NOT NULL, restaurantName varchar(255) NOT NULL, transactionAmount DOUBLE NOT NULL, PRIMARY KEY (transactionid), transactionDate varchar(30) NOT NULL, FOREIGN KEY (customerid) REFERENCES customerDetails (customerid))"
-		// this.db.query(userPurchaseHistory);
+		const userPurchaseHistory = `CREATE TABLE ${CustomerPurchaseHistoryTable.TABLE_NAME} (${CustomerPurchaseHistoryTable.TRANSACTION_ID_PROPERTY} INT NOT NULL AUTO_INCREMENT, ${CustomerPurchaseHistoryTable.CUSTOMER_ID_PROPERTY} INT NOT NULL, ${CustomerPurchaseHistoryTable.DISH_NAME_PROPERTY} varchar(1000) NOT NULL, ${CustomerPurchaseHistoryTable.RESTURANT_NAME_PROPERTY} varchar(255) NOT NULL, ${CustomerPurchaseHistoryTable.TRANSACTION_AMOUNT_PROPERTY} DOUBLE NOT NULL, ${CustomerPurchaseHistoryTable.TRANSACTION_DATE_PROPERTY} varchar(50) NOT NULL, PRIMARY KEY (${CustomerPurchaseHistoryTable.TRANSACTION_ID_PROPERTY}),FOREIGN KEY (${CustomerPurchaseHistoryTable.CUSTOMER_ID_PROPERTY}) REFERENCES customerDetails (${CustomerPurchaseHistoryTable.CUSTOMER_ID_PROPERTY}))`
 		await this.triggerSQLQuery(userPurchaseHistory);
 	}
 
 	async migrateDataToDb() {
-		const insertInCustomerDetailsTable = "INSERT INTO customerDetails (`customerid`, `customerName`, `cashBalance`) VALUES (?, ?, ?)"
-		const insertInPurchaseHistorTable = "INSERT INTO purchaseHistory (`customerid`, `dishName`, `restaurantName`, `transactionAmount`, `transactionDate`) VALUE (?, ?, ?, ?, ?)"
+		const insertInCustomerDetailsTable = `INSERT INTO ${CustomerDetailsTable.TABLE_NAME} (${CustomerDetailsTable.CUSTOMER_ID_PROPERTY}, ${CustomerDetailsTable.CUSTOMER_NAME_PROPERTY}, ${CustomerDetailsTable.CASH_BALANCE_PROPERTY}) VALUES (?, ?, ?)`
+		const insertInPurchaseHistorTable = `INSERT INTO ${CustomerPurchaseHistoryTable.TABLE_NAME} (${CustomerPurchaseHistoryTable.CUSTOMER_ID_PROPERTY}, ${CustomerPurchaseHistoryTable.DISH_NAME_PROPERTY}, ${CustomerPurchaseHistoryTable.RESTURANT_NAME_PROPERTY}, ${CustomerPurchaseHistoryTable.TRANSACTION_AMOUNT_PROPERTY}, ${CustomerPurchaseHistoryTable.TRANSACTION_DATE_PROPERTY}) VALUE (?, ?, ?, ?, ?)`
 		console.log(userData.length);
 		for (let user of userData) {
 			await this.triggerSQLQuery(insertInCustomerDetailsTable, [user.id, user.name, user.cashBalance]);
